@@ -7,7 +7,7 @@ using Product_API.Models;
 
 namespace Product_API.Controllers
 {
-    [EnableCors("angualar")]
+    [EnableCors("products")]
     [Route("api/products")]
     [ApiController]
 

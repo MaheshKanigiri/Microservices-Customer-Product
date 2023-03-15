@@ -15,10 +15,14 @@ builder.Services.AddDbContext<Db2Context>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddCors(p => p.AddPolicy("angular", build =>
+//CORS implementation
+builder.Services.AddCors(options =>
 {
-    build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-}));
+    options.AddPolicy("customer", builder =>
+    {
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -27,11 +31,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseCors("angualar");
+
+app.UseCors("customer");
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

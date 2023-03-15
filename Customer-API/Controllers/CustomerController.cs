@@ -8,7 +8,7 @@ using System.Net;
 
 namespace Customer_API.Controllers
 {
-    [EnableCors("angualar")]
+    [EnableCors("customer")]
     [Route("api/customers")]
     [ApiController]
   

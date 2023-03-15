@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Product_API.Context;
 using Product_API.Models;
 
 namespace Product_API.Controllers
 {
+    [EnableCors("products")]
     [ApiController]
     [Route("api/categories")]
     public class CategoryController

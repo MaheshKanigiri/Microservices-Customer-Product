@@ -6,12 +6,21 @@ using Ocelot.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 
-
 //for-cors
-builder.Services.AddCors(p => p.AddPolicy("angular", build =>
+//CORS implementation
+builder.Services.AddCors(options =>
 {
-    build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-}));
+    options.AddPolicy("gatewayApi", builder =>
+    {
+        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Configuration.AddJsonFile("Ocelot.json",optional:false,reloadOnChange:true);
+builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -19,8 +28,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseCors("angualar");
-
-app.MapGet("/", () => "Hello World!");
-
+app.UseCors("gatewayApi");
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+await app.UseOcelot();
 app.Run();
+
+//"GlobalConfiguration": {
+//  "RequestIdKey": "https//localhost:7290"
+//},
