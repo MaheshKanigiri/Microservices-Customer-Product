@@ -46,5 +46,4 @@ app.UseCors("products");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
