@@ -1,8 +1,9 @@
-﻿using Amazon.Runtime;
+﻿using Admin_API.Models;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson.IO;
+using MongoDB.Bson;
 using MongoDB.Driver;
-using Newtonsoft.Json;
 using JsonConvert = Newtonsoft.Json.JsonConvert;
 
 namespace Admin_API.Controllers
@@ -97,6 +98,52 @@ namespace Admin_API.Controllers
 
             return null;
         }
+
+        [HttpGet("products/pdf")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileStreamResult))]
+        public async Task<FileStreamResult> GetProductsPdf()
+        {
+            var products = await _productCollection.Find(_ => true).ToListAsync();
+            var memoryStream = new MemoryStream();
+            var document = new Document();
+            var writer = PdfWriter.GetInstance(document, memoryStream);
+
+            document.Open();
+            //document.Add(new Paragraph("Products"));
+
+            // Add centered heading
+            var heading = new Paragraph("Products");
+            heading.Alignment = Element.ALIGN_CENTER;
+            document.Add(heading);
+
+            // Add table
+            var table = new PdfPTable(2);
+            table.AddCell("Name");
+            table.AddCell("Price");
+
+            foreach (var product in products)
+            {
+                //document.Add(new Paragraph($"{product.Name}, {product.Price}"));
+                table.AddCell(product.Name);
+                table.AddCell(product.Price.ToString());
+            }
+            document.Add(table);
+            document.Close();
+
+            // Create a copy of the memory stream
+            var copyStream = new MemoryStream(memoryStream.ToArray());
+
+            return new FileStreamResult(copyStream, "application/pdf")
+            {
+                FileDownloadName = "products.pdf"
+            };
+        }
+
+
+
+
+
+
 
 
 
